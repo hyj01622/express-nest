@@ -1,53 +1,20 @@
 import * as express from 'express';
-import { Cat } from './app.model';
+import catsRouter from './cats/cats.route';
 
 const app: express.Express = express();
 const port = 8000;
 
+//* json middleware
+app.use(express.json());
+
 //* logging middleware
 app.use((req, res, next) => {
-  console.log(req.rawHeaders[1]);
+  // console.log('logging middleware');
   next();
 });
 
-//* Read
-app.get('/cats', (req, res) => {
-  try {
-    const cats = Cat;
-    res.status(200).json({
-      data: {
-        cats,
-      },
-    });
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(500).send({
-        error: err.message,
-      });
-    }
-  }
-});
-
-//* Read 특정 고양이 데이터 조회
-app.get('/cats/:id', (req, res) => {
-  try {
-    const id = req.params.id;
-    const cats = Cat.find((cat) => {
-      return cat.id === id;
-    });
-    res.status(200).json({
-      data: {
-        cats,
-      },
-    });
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(500).send({
-        error: err.message,
-      });
-    }
-  }
-});
+//* router middleware
+app.use(catsRouter);
 
 //* 404 middleware
 app.use((req, res, next) => {
